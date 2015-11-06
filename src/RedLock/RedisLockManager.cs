@@ -4,12 +4,15 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using RedLock.Logging;
 using StackExchange.Redis;
 
 namespace RedLock
 {
     public class RedisLockManager : IRedisLockManager
     {
+        private static ILog log = LogProvider.GetLogger(nameof(RedisLockManager));
+
         private const string UnlockScript = @"
             if redis.call(""get"",KEYS[1]) == ARGV[1] then
                 return redis.call(""del"",KEYS[1])
@@ -75,7 +78,15 @@ namespace RedLock
 
             foreach (var connection in connections)
             {
-                results.Add(connection.GetDatabase().KeyExists(key));
+                try
+                {
+                    results.Add(connection.GetDatabase().KeyExists(key));
+                }
+                catch (Exception ex)
+                {
+                    log.WarnException($"Unreachable endpoint '{connection.ClientName}'.", ex);
+                    results.Add(false);
+                }
             }
 
             return results.Count(x => x == true) >= Quorum;
@@ -108,39 +119,32 @@ namespace RedLock
 
         private async Task<LockResult> AcquireLock(object resource, TimeSpan ttl)
         {
-            try
+            var succeededLocks = 0;
+            var startTime = DateTime.Now;
+            var value = CreateUniqueLockId();
+
+            foreach (var connection in connections)
             {
-                var n = 0;
-                var startTime = DateTime.Now;
-                var value = CreateUniqueLockId();
-
-                foreach (var connection in connections)
+                if (await LockInstance(connection, resource, value, ttl))
                 {
-                    if (await LockInstance(connection, resource, value, ttl))
-                    {
-                        n++;
-                    }
+                    succeededLocks++;
                 }
-
-                var drift = Convert.ToInt32((ttl.TotalMilliseconds * options.ClockDriveFactor) + 2);
-                var validityTime = ttl - (DateTime.Now - startTime) - new TimeSpan(0, 0, 0, 0, drift);
-
-                if (n >= Quorum && validityTime.TotalMilliseconds > 0)
-                {
-                    return LockResult.Create(new Mutex(resource, value, validityTime));
-                }
-
-                foreach (var connection in connections)
-                {
-                    await UnlockInstance(connection, resource, value);
-                }
-
-                return LockResult.Empty;
             }
-            catch (Exception)
+
+            var drift = Convert.ToInt32((ttl.TotalMilliseconds * options.ClockDriveFactor) + 2);
+            var validityTime = ttl - (DateTime.Now - startTime) - new TimeSpan(0, 0, 0, 0, drift);
+
+            if (succeededLocks >= Quorum && validityTime.TotalMilliseconds > 0)
             {
-                return LockResult.Empty;
+                return LockResult.Create(new Mutex(resource, value, validityTime));
             }
+
+            foreach (var connection in connections)
+            {
+                await UnlockInstance(connection, resource, value);
+            }
+
+            return LockResult.Empty;
         }
 
         private static async Task<bool> LockInstance(ConnectionMultiplexer connection, object resource, byte[] value, TimeSpan ttl)
@@ -150,8 +154,10 @@ namespace RedLock
                 var key = GetRedisKey(resource);
                 return await connection.GetDatabase().StringSetAsync(key, value, ttl, When.NotExists);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                var message = $"Unreachable endpoint '{connection.ClientName}'. Unable to acquire lock on a node.";
+                log.WarnException(message, ex);
                 return false;
             }
         }
@@ -161,12 +167,19 @@ namespace RedLock
             RedisKey[] key = { GetRedisKey(resource) };
             RedisValue[] values = { value };
 
-            await connection.GetDatabase().ScriptEvaluateAsync(UnlockScript, key, values);
+            try
+            {
+                await connection.GetDatabase().ScriptEvaluateAsync(UnlockScript, key, values);
+            }
+            catch (Exception ex)
+            {
+                log.WarnException($"Unreachable endpoint '{connection.ClientName}'. Unable to unlock resource '{resource}'.", ex);
+            }
         }
 
         private static string GetRedisKey(object resource)
         {
-            if (resource.GetType() == typeof(string))
+            if (resource is string)
             {
                 return resource.ToString();
             }
