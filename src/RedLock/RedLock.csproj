@@ -44,6 +44,7 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="IRedisLockManager.cs" />
     <Compile Include="LockResult.cs" />
     <Compile Include="Mutex.cs" />
