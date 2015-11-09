@@ -78,6 +78,13 @@ namespace RedLock
 
             foreach (var connection in connections)
             {
+                if (connection.IsConnected == false)
+                {
+                    log.Warn($"Unreachable endpoint '{connection.ClientName}'.");
+                    results.Add(false);
+                    continue;
+                }
+
                 try
                 {
                     results.Add(connection.GetDatabase().KeyExists(key));
@@ -149,6 +156,14 @@ namespace RedLock
 
         private static async Task<bool> LockInstance(ConnectionMultiplexer connection, object resource, byte[] value, TimeSpan ttl)
         {
+            if (connection.IsConnected == false)
+            {
+                var message = $"Unreachable endpoint '{connection.ClientName}'. Unable to acquire lock on this node.";
+                log.Warn(message);
+
+                return false;
+            }
+
             try
             {
                 var key = GetRedisKey(resource);
@@ -156,14 +171,22 @@ namespace RedLock
             }
             catch (Exception ex)
             {
-                var message = $"Unreachable endpoint '{connection.ClientName}'. Unable to acquire lock on a node.";
+                var message = $"Unreachable endpoint '{connection.ClientName}'. Unable to acquire lock on this node.";
                 log.WarnException(message, ex);
+
                 return false;
             }
         }
 
         private static async Task UnlockInstance(ConnectionMultiplexer connection, object resource, byte[] value)
         {
+            if (connection.IsConnected == false)
+            {
+                log.Warn($"Unreachable endpoint '{connection.ClientName}'. Unable to unlock resource '{resource}'.");
+
+                return;
+            }
+
             RedisKey[] key = { GetRedisKey(resource) };
             RedisValue[] values = { value };
 
