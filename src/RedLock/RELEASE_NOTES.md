@@ -1,3 +1,6 @@
+#### 0.1.0-beta0003 - 23.11.2015
+* Update RedisLockManager to use Redis cluster.
+
 #### 0.1.0-beta0002 - 06.11.2015
 * RedisLockManager.UnlockInstance does not throw if the end point is unreachable.
 * Added dependency to LibLog.
