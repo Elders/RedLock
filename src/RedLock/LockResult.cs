@@ -11,7 +11,7 @@ namespace RedLock
             Mutex = mutex;
         }
 
-        public bool LockAcquired { get { return Mutex != null; } }
+        public bool Locked { get { return Mutex != null; } }
 
         public Mutex Mutex { get; private set; }
 
