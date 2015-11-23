@@ -16,9 +16,9 @@ namespace Example
 
             var lockManager = new RedisLockManager(endpoints);
 
-            var result = lockManager.Lock("asdf", TimeSpan.FromSeconds(60));
+            var result = lockManager.Lock("resource_key", TimeSpan.FromSeconds(60));
 
-            if (result.Locked)
+            if (result.LockAcquired)
             {
                 try
                 {

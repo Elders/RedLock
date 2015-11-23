@@ -197,7 +197,7 @@ namespace RedLock
             while (currentRetry++ < retryCount)
             {
                 result = await action();
-                if (result.Locked) break;
+                if (result.LockAcquired) break;
 
                 await Task.Delay(retryDelay);
             }
