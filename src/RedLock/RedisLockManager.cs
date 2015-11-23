@@ -24,9 +24,7 @@ namespace RedLock
 
         private bool isDisposed = false;
 
-        private IList<ConnectionMultiplexer> connections;
-
-        private int Quorum { get { return (connections.Count / 2) + 1; } }
+        private ConnectionMultiplexer connection;
 
         public RedisLockManager(IEnumerable<IPEndPoint> redisEndpoints) : this(RedLockOptions.Default, redisEndpoints)
         {
@@ -36,16 +34,19 @@ namespace RedLock
         {
             if (ReferenceEquals(null, options)) throw new ArgumentNullException(nameof(options));
             if (ReferenceEquals(null, redisEndpoints)) throw new ArgumentNullException(nameof(redisEndpoints));
-            if (!redisEndpoints.Any()) throw new ArgumentException(nameof(redisEndpoints), "No Redis endpoints provided.");
+            if (!redisEndpoints.Any()) throw new ArgumentException("No Redis endpoints provided.", nameof(redisEndpoints));
 
-            connections = new List<ConnectionMultiplexer>();
             this.options = options;
+
+            var configuration = new ConfigurationOptions();
+            configuration.AbortOnConnectFail = false;
 
             foreach (var endpoint in redisEndpoints)
             {
-                // TODO: ConnectionMultiplexer.Connect might throw an exception.
-                connections.Add(ConnectionMultiplexer.Connect(endpoint.ToString()));
+                configuration.EndPoints.Add(endpoint);
             }
+
+            connection = ConnectionMultiplexer.Connect(configuration);
         }
 
         public LockResult Lock(object resource, TimeSpan ttl)
@@ -65,38 +66,28 @@ namespace RedLock
 
         public async Task UnlockAsync(Mutex lockObject)
         {
-            foreach (var connection in connections)
-            {
-                await UnlockInstance(connection, lockObject.Resource, lockObject.Value);
-            }
+            await UnlockInstance(lockObject.Resource, lockObject.Value);
         }
 
         public bool IsLocked(object resource)
         {
             var key = GetRedisKey(resource);
-            var results = new List<bool>();
 
-            foreach (var connection in connections)
+            if (connection.IsConnected == false)
             {
-                if (connection.IsConnected == false)
-                {
-                    log.Warn($"Unreachable endpoint '{connection.ClientName}'.");
-                    results.Add(false);
-                    continue;
-                }
-
-                try
-                {
-                    results.Add(connection.GetDatabase().KeyExists(key));
-                }
-                catch (Exception ex)
-                {
-                    log.WarnException($"Unreachable endpoint '{connection.ClientName}'.", ex);
-                    results.Add(false);
-                }
+                log.Warn($"Unreachable endpoint '{connection.ClientName}'.");
+                return false;
             }
 
-            return results.Count(x => x == true) >= Quorum;
+            try
+            {
+                return connection.GetDatabase().KeyExists(key);
+            }
+            catch (Exception ex)
+            {
+                log.WarnException($"Unreachable endpoint '{connection.ClientName}'.", ex);
+                return false;
+            }
         }
 
         public void Dispose()
@@ -110,14 +101,9 @@ namespace RedLock
 
             if (disposing)
             {
-                if (connections != null)
+                if (connection != null)
                 {
-                    foreach (var connection in connections)
-                    {
-                        connection.Dispose();
-                    }
-
-                    connections = null;
+                    connection.Dispose();
                 }
 
                 isDisposed = true;
@@ -126,35 +112,28 @@ namespace RedLock
 
         private async Task<LockResult> AcquireLock(object resource, TimeSpan ttl)
         {
-            var succeededLocks = 0;
             var startTime = DateTime.Now;
             var value = CreateUniqueLockId();
 
-            foreach (var connection in connections)
+            if (await LockInstance(resource, value, ttl) == false)
             {
-                if (await LockInstance(connection, resource, value, ttl))
-                {
-                    succeededLocks++;
-                }
+                return LockResult.Empty;
             }
 
             var drift = Convert.ToInt32((ttl.TotalMilliseconds * options.ClockDriveFactor) + 2);
             var validityTime = ttl - (DateTime.Now - startTime) - new TimeSpan(0, 0, 0, 0, drift);
 
-            if (succeededLocks >= Quorum && validityTime.TotalMilliseconds > 0)
+            if (validityTime.TotalMilliseconds > 0)
             {
                 return LockResult.Create(new Mutex(resource, value, validityTime));
             }
 
-            foreach (var connection in connections)
-            {
-                await UnlockInstance(connection, resource, value);
-            }
+            await UnlockInstance(resource, value);
 
             return LockResult.Empty;
         }
 
-        private static async Task<bool> LockInstance(ConnectionMultiplexer connection, object resource, byte[] value, TimeSpan ttl)
+        private async Task<bool> LockInstance(object resource, byte[] value, TimeSpan ttl)
         {
             if (connection.IsConnected == false)
             {
@@ -178,7 +157,7 @@ namespace RedLock
             }
         }
 
-        private static async Task UnlockInstance(ConnectionMultiplexer connection, object resource, byte[] value)
+        private async Task UnlockInstance(object resource, byte[] value)
         {
             if (connection.IsConnected == false)
             {
@@ -192,7 +171,7 @@ namespace RedLock
 
             try
             {
-                await connection.GetDatabase().ScriptEvaluateAsync(UnlockScript, key, values);
+                await connection.GetDatabase().ScriptEvaluateAsync(UnlockScript, key, values, CommandFlags.DemandMaster);
             }
             catch (Exception ex)
             {
