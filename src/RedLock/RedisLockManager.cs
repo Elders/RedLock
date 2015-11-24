@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RedLock.Logging;
@@ -81,7 +83,7 @@ namespace RedLock
 
             try
             {
-                return connection.GetDatabase().KeyExists(key);
+                return connection.GetDatabase().KeyExists(key, CommandFlags.DemandMaster);
             }
             catch (Exception ex)
             {
@@ -146,7 +148,7 @@ namespace RedLock
             try
             {
                 var key = GetRedisKey(resource);
-                return await connection.GetDatabase().StringSetAsync(key, value, ttl, When.NotExists);
+                return await connection.GetDatabase().StringSetAsync(key, value, ttl, When.NotExists, CommandFlags.DemandMaster);
             }
             catch (Exception ex)
             {
@@ -186,7 +188,17 @@ namespace RedLock
                 return resource.ToString();
             }
 
-            return JsonConvert.SerializeObject(resource);
+            var json = JsonConvert.SerializeObject(resource);
+            var bytes = GetBytes(json);
+            return Convert.ToBase64String(bytes);
+        }
+
+        private static byte[] GetBytes(string str)
+        {
+            var bytes = new byte[str.Length * sizeof(char)];
+            Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+
+            return bytes;
         }
 
         private static async Task<LockResult> Retry(Func<Task<LockResult>> action, int retryCount, TimeSpan retryDelay)
