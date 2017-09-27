@@ -26,27 +26,18 @@ namespace RedLock
 
         private ConnectionMultiplexer connection;
 
-        public RedisLockManager(IEnumerable<IPEndPoint> redisEndpoints) : this(RedLockOptions.Default, redisEndpoints)
+        public RedisLockManager(ConfigurationOptions configurationOptions) : this(RedLockOptions.Default, configurationOptions)
         {
         }
 
-        public RedisLockManager(RedLockOptions options, IEnumerable<IPEndPoint> redisEndpoints)
+        public RedisLockManager(RedLockOptions options, ConfigurationOptions configurationOptions)
         {
             if (ReferenceEquals(null, options)) throw new ArgumentNullException(nameof(options));
-            if (ReferenceEquals(null, redisEndpoints)) throw new ArgumentNullException(nameof(redisEndpoints));
-            if (!redisEndpoints.Any()) throw new ArgumentException("No Redis endpoints provided.", nameof(redisEndpoints));
+            if (ReferenceEquals(null, configurationOptions)) throw new ArgumentNullException(nameof(configurationOptions));
 
             this.options = options;
 
-            var configuration = new ConfigurationOptions();
-            configuration.AbortOnConnectFail = false;
-
-            foreach (var endpoint in redisEndpoints)
-            {
-                configuration.EndPoints.Add(endpoint);
-            }
-
-            connection = ConnectionMultiplexer.Connect(configuration);
+            connection = ConnectionMultiplexer.Connect(configurationOptions);
         }
 
         public LockResult Lock(object resource, TimeSpan ttl)
