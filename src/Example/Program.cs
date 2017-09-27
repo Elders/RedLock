@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using RedLock;
+using StackExchange.Redis;
 
 namespace Example
 {
@@ -14,7 +15,9 @@ namespace Example
 
             var endpoints = new[] { endpoint1, endpoint2, endpoint3 };
 
-            var lockManager = new RedisLockManager(endpoints);
+            var config = ConfigurationOptions.Parse("docker-local.com:6379,abortConnect=False");
+
+            var lockManager = new RedisLockManager(config);
 
             var result = lockManager.Lock("resource_key", TimeSpan.FromSeconds(60));
 
