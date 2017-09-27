@@ -19,7 +19,5 @@ namespace RedLock
         public double ClockDriveFactor { get; set; }
 
         public static RedLockOptions Default { get { return defaults; } }
-
-        ConfigurationOptions ConfigurationOptions { get; set; }
     }
 }

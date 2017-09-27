@@ -26,16 +26,18 @@ namespace RedLock
 
         private ConnectionMultiplexer connection;
 
-        public RedisLockManager(ConfigurationOptions configurationOptions) : this(RedLockOptions.Default, configurationOptions)
+        public RedisLockManager(string connectionString) : this(RedLockOptions.Default, connectionString)
         {
         }
 
-        public RedisLockManager(RedLockOptions options, ConfigurationOptions configurationOptions)
+        public RedisLockManager(RedLockOptions options, string connectionString)
         {
             if (ReferenceEquals(null, options)) throw new ArgumentNullException(nameof(options));
-            if (ReferenceEquals(null, configurationOptions)) throw new ArgumentNullException(nameof(configurationOptions));
+            if (string.IsNullOrEmpty(connectionString)) throw new ArgumentNullException(nameof(connectionString));
 
             this.options = options;
+
+            var configurationOptions = ConfigurationOptions.Parse(connectionString);
 
             connection = ConnectionMultiplexer.Connect(configurationOptions);
         }

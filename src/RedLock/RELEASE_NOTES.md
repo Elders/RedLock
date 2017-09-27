@@ -1,3 +1,7 @@
+#### 1.0.1 - 27.01.2016
+* Changed RedisLockManager constructor to work with Redis Connection String
+
+
 #### 1.0.0 - 27.01.2016
 * Changed RedisLockManager constructor to work with StackExchange.Redis.ConnectionOptions instead with IPEndpoints 
 

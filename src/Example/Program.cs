@@ -15,9 +15,7 @@ namespace Example
 
             var endpoints = new[] { endpoint1, endpoint2, endpoint3 };
 
-            var config = ConfigurationOptions.Parse("docker-local.com:6379,abortConnect=False");
-
-            var lockManager = new RedisLockManager(config);
+            var lockManager = new RedisLockManager("docker-local.com:6379,abortConnect=False");
 
             var result = lockManager.Lock("resource_key", TimeSpan.FromSeconds(60));
 
