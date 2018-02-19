@@ -779,9 +779,9 @@ namespace RedLock.Logging
         private readonly ICallSiteExtension _callsiteLogger;
         private readonly Func<bool> _getIsDisabled;
         internal const string FailedToGenerateLogMessage = "Failed to generate log message";
-
+#if !LIBLOG_PORTABLE
         Func<string> _lastExtensionMethod;
-
+#endif
         internal LoggerExecutionWrapper(Logger logger, Func<bool> getIsDisabled = null)
         {
             _logger = logger;

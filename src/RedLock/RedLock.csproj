@@ -1,24 +1,42 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <PackageId>RedLock</PackageId>
-    <PackageLicenseUrl>https://github.com/Elders/RedLock/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/Elders/RedLock</PackageProjectUrl>
-    <PackageTags>distrubited lock redis redlock cronus</PackageTags>
-    <RepositoryUrl>https://github.com/Elders/RedLock</RepositoryUrl>
-    <RepositoryType>Framework</RepositoryType>
-    <Authors>Elders</Authors>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;LIBLOG_PORTABLE;NETSTANDARD2_0</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="LibLog" Version="4.2.6" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
-    <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
-  </ItemGroup>
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    </PropertyGroup>
+
+    <!--Nuget-->
+    <PropertyGroup>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <PackageId>RedLock</PackageId>
+        <PackageLicenseUrl>https://github.com/Elders/RedLock/blob/master/LICENSE</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/Elders/RedLock</PackageProjectUrl>
+        <PackageTags>distrubited lock redis redlock cronus</PackageTags>
+        <RepositoryUrl>https://github.com/Elders/RedLock</RepositoryUrl>
+        <RepositoryType>Framework</RepositoryType>
+        <Authors>Elders</Authors>
+    </PropertyGroup>
+
+    <!--netstandard2.0-->
+    <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+        <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;LIBLOG_PORTABLE;NETSTANDARD2_0</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+        <PackageReference Include="LibLog" Version="4.2.6" />
+        <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+        <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
+    </ItemGroup>
+
+    <!--net45-->
+    <PropertyGroup Condition="'$(TargetFramework)'=='net45'">
+        <DefineConstants>TRACE;DEBUG;LIBLOG_PORTABLE</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(TargetFramework)'=='net45'">
+        <Reference Include="mscorlib" />
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="Microsoft.CSharp" />
+        <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
+        <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+        <PackageReference Include="LibLog" Version="4.2.6" />
+    </ItemGroup>
 </Project>
