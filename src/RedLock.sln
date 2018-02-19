@@ -1,16 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{023A7307-B055-4CED-A9B3-8981C352C2AF}"
-	ProjectSection(SolutionItems) = preProject
-		RedLock\RELEASE_NOTES.md = RedLock\RELEASE_NOTES.md
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedLock", "RedLock\RedLock.csproj", "{5753C640-A66E-4C7D-A8EF-F5FCA5B1F3E6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example", "Example\Example.csproj", "{7622C585-A5E6-45F0-84F1-954FC2AF9A77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,12 +15,11 @@ Global
 		{5753C640-A66E-4C7D-A8EF-F5FCA5B1F3E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5753C640-A66E-4C7D-A8EF-F5FCA5B1F3E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5753C640-A66E-4C7D-A8EF-F5FCA5B1F3E6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7622C585-A5E6-45F0-84F1-954FC2AF9A77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7622C585-A5E6-45F0-84F1-954FC2AF9A77}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7622C585-A5E6-45F0-84F1-954FC2AF9A77}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7622C585-A5E6-45F0-84F1-954FC2AF9A77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BDCDF8F3-E5BD-4A15-BFCD-3F74FD2FAFEA}
 	EndGlobalSection
 EndGlobal

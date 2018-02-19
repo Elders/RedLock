@@ -1,3 +1,6 @@
+#### 2.0.0 - 19.02.2018
+* Adds netstandard2.0 support
+
 #### 1.0.1 - 27.01.2016
 * Changed RedisLockManager constructor to work with Redis Connection String
 
