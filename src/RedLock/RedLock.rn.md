@@ -1,3 +1,6 @@
+#### 2.0.1 - 20.02.2018
+* Downgrades Newtonsoft.Json to 10.0.3
+
 #### 2.0.0 - 19.02.2018
 * Adds netstandard2.0 support
 

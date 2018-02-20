@@ -22,7 +22,7 @@
     <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
         <PackageReference Include="LibLog" Version="4.2.6" />
         <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
-        <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
         <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
     </ItemGroup>
 
@@ -36,7 +36,7 @@
         <Reference Include="System.Core" />
         <Reference Include="Microsoft.CSharp" />
         <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
-        <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
         <PackageReference Include="LibLog" Version="4.2.6" />
     </ItemGroup>
 </Project>
