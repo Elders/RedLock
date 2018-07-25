@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using RedLock.Logging;
 using StackExchange.Redis;
 
@@ -12,13 +8,6 @@ namespace RedLock
     public class RedisLockManager : IRedisLockManager
     {
         private static ILog log = LogProvider.GetLogger(nameof(RedisLockManager));
-
-        private const string UnlockScript = @"
-            if redis.call(""get"",KEYS[1]) == ARGV[1] then
-                return redis.call(""del"",KEYS[1])
-            else
-                return 0
-            end";
 
         private RedLockOptions options;
 
@@ -42,30 +31,28 @@ namespace RedLock
             connection = ConnectionMultiplexer.Connect(configurationOptions);
         }
 
-        public LockResult Lock(object resource, TimeSpan ttl)
+        public bool Lock(string resource, TimeSpan ttl)
         {
             return LockAsync(resource, ttl).Result;
         }
 
-        public async Task<LockResult> LockAsync(object resource, TimeSpan ttl)
+        public async Task<bool> LockAsync(string resource, TimeSpan ttl)
         {
             return await Retry(() => AcquireLock(resource, ttl), options.LockRetryCount, options.LockRetryDelay);
         }
 
-        public void Unlock(Mutex mutex)
+        public void Unlock(string resource)
         {
-            UnlockAsync(mutex).Wait();
+            UnlockAsync(resource).Wait();
         }
 
-        public async Task UnlockAsync(Mutex lockObject)
+        public async Task UnlockAsync(string resource)
         {
-            await UnlockInstance(lockObject.Resource, lockObject.Value);
+            await UnlockInstance(resource);
         }
 
-        public bool IsLocked(object resource)
+        public bool IsLocked(string resource)
         {
-            var key = GetRedisKey(resource);
-
             if (connection.IsConnected == false)
             {
                 log.Warn($"Unreachable endpoint '{connection.ClientName}'.");
@@ -74,7 +61,7 @@ namespace RedLock
 
             try
             {
-                return connection.GetDatabase().KeyExists(key, CommandFlags.DemandMaster);
+                return connection.GetDatabase().KeyExists(resource, CommandFlags.DemandMaster);
             }
             catch (Exception ex)
             {
@@ -103,14 +90,13 @@ namespace RedLock
             }
         }
 
-        private async Task<LockResult> AcquireLock(object resource, TimeSpan ttl)
+        private async Task<bool> AcquireLock(string resource, TimeSpan ttl)
         {
             var startTime = DateTime.Now;
-            var value = CreateUniqueLockId();
 
-            if (await LockInstance(resource, value, ttl) == false)
+            if (await LockInstance(resource, ttl) == false)
             {
-                return LockResult.Empty;
+                return false;
             }
 
             var drift = Convert.ToInt32((ttl.TotalMilliseconds * options.ClockDriveFactor) + 2);
@@ -118,15 +104,15 @@ namespace RedLock
 
             if (validityTime.TotalMilliseconds > 0)
             {
-                return LockResult.Create(new Mutex(resource, value, validityTime));
+                return true;
             }
 
-            await UnlockInstance(resource, value);
+            await UnlockInstance(resource);
 
-            return LockResult.Empty;
+            return false;
         }
 
-        private async Task<bool> LockInstance(object resource, byte[] value, TimeSpan ttl)
+        private async Task<bool> LockInstance(string resource, TimeSpan ttl)
         {
             if (connection.IsConnected == false)
             {
@@ -138,8 +124,7 @@ namespace RedLock
 
             try
             {
-                var key = GetRedisKey(resource);
-                return await connection.GetDatabase().StringSetAsync(key, value, ttl, When.NotExists, CommandFlags.DemandMaster);
+                return await connection.GetDatabase().StringSetAsync(resource, Guid.NewGuid().ToByteArray(), ttl, When.NotExists, CommandFlags.DemandMaster);
             }
             catch (Exception ex)
             {
@@ -150,7 +135,7 @@ namespace RedLock
             }
         }
 
-        private async Task UnlockInstance(object resource, byte[] value)
+        private async Task UnlockInstance(string resource)
         {
             if (connection.IsConnected == false)
             {
@@ -159,12 +144,11 @@ namespace RedLock
                 return;
             }
 
-            RedisKey[] key = { GetRedisKey(resource) };
-            RedisValue[] values = { value };
+            RedisKey[] key = { resource };
 
             try
             {
-                await connection.GetDatabase().ScriptEvaluateAsync(UnlockScript, key, values, CommandFlags.DemandMaster);
+                await connection.GetDatabase().KeyDeleteAsync(key, CommandFlags.DemandMaster);
             }
             catch (Exception ex)
             {
@@ -172,45 +156,20 @@ namespace RedLock
             }
         }
 
-        private static string GetRedisKey(object resource)
-        {
-            if (resource is string)
-            {
-                return resource.ToString();
-            }
-
-            var json = JsonConvert.SerializeObject(resource);
-            var bytes = GetBytes(json);
-            return Convert.ToBase64String(bytes);
-        }
-
-        private static byte[] GetBytes(string str)
-        {
-            var bytes = new byte[str.Length * sizeof(char)];
-            Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
-
-            return bytes;
-        }
-
-        private static async Task<LockResult> Retry(Func<Task<LockResult>> action, int retryCount, TimeSpan retryDelay)
+        private static async Task<bool> Retry(Func<Task<bool>> action, int retryCount, TimeSpan retryDelay)
         {
             var currentRetry = 0;
-            var result = LockResult.Empty;
+            var result = false;
 
             while (currentRetry++ < retryCount)
             {
                 result = await action();
-                if (result.LockAcquired) break;
+                if (result) break;
 
                 await Task.Delay(retryDelay);
             }
 
             return result;
-        }
-
-        private static byte[] CreateUniqueLockId()
-        {
-            return Guid.NewGuid().ToByteArray();
         }
     }
 }

@@ -1,3 +1,8 @@
+#### 3.0.0 - 25.07.2018
+* Removes Newtonsoft.Json
+* Removes LockResult
+* Removes Mutex
+
 #### 2.0.1 - 20.02.2018
 * Downgrades Newtonsoft.Json to 10.0.3
 

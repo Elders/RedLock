@@ -5,14 +5,14 @@ namespace RedLock
 {
     public interface IRedisLockManager : IDisposable
     {
-        bool IsLocked(object resource);
+        bool IsLocked(string resource);
 
-        LockResult Lock(object resource, TimeSpan ttl);
+        bool Lock(string resource, TimeSpan ttl);
 
-        Task<LockResult> LockAsync(object resource, TimeSpan ttl);
+        Task<bool> LockAsync(string resource, TimeSpan ttl);
 
-        void Unlock(Mutex mutex);
+        void Unlock(string resource);
 
-        Task UnlockAsync(Mutex lockObject);
+        Task UnlockAsync(string resource);
     }
 }
