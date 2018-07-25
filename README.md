@@ -6,17 +6,11 @@ class Program
 {
     static void Main(string[] args)
     {
-        var endpoint1 = new IPEndPoint(IPAddress.Parse("192.168.99.100"), 1001);
-        var endpoint2 = new IPEndPoint(IPAddress.Parse("192.168.99.100"), 1002);
-        var endpoint3 = new IPEndPoint(IPAddress.Parse("192.168.99.100"), 1003);
-
-        var endpoints = new[] { endpoint1, endpoint2, endpoint3 };
-
         var lockManager = new RedisLockManager("docker-local.com:6379,abortConnect=False");
 
-        var result = lockManager.Lock("resource_key", TimeSpan.FromSeconds(60));
+        var resource = "resource_key";
 
-        if (result.LockAcquired)
+        if (lockManager.Lock(resource, TimeSpan.FromSeconds(60)))
         {
             try
             {
@@ -24,7 +18,7 @@ class Program
             }
             finally
             {
-                lockManager.Unlock(result.Mutex);
+                lockManager.Unlock(resource);
             }
         }
     }
