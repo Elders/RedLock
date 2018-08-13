@@ -1,3 +1,6 @@
+#### 3.0.1 - 13.08.2018
+* Adds ConfigureAwait to async calls
+
 #### 3.0.0 - 25.07.2018
 * Removes Newtonsoft.Json
 * Removes LockResult

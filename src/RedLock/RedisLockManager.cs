@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RedLock.Logging;
 using StackExchange.Redis;
@@ -38,7 +39,7 @@ namespace RedLock
 
         public async Task<bool> LockAsync(string resource, TimeSpan ttl)
         {
-            return await Retry(() => AcquireLock(resource, ttl), options.LockRetryCount, options.LockRetryDelay);
+            return await Retry(() => AcquireLock(resource, ttl), options.LockRetryCount, options.LockRetryDelay).ConfigureAwait(false);
         }
 
         public void Unlock(string resource)
@@ -48,7 +49,7 @@ namespace RedLock
 
         public async Task UnlockAsync(string resource)
         {
-            await UnlockInstance(resource);
+            await UnlockInstance(resource).ConfigureAwait(false);
         }
 
         public bool IsLocked(string resource)
@@ -94,7 +95,7 @@ namespace RedLock
         {
             var startTime = DateTime.Now;
 
-            if (await LockInstance(resource, ttl) == false)
+            if (await LockInstance(resource, ttl).ConfigureAwait(false) == false)
             {
                 return false;
             }
@@ -107,7 +108,7 @@ namespace RedLock
                 return true;
             }
 
-            await UnlockInstance(resource);
+            await UnlockInstance(resource).ConfigureAwait(false);
 
             return false;
         }
@@ -124,7 +125,16 @@ namespace RedLock
 
             try
             {
-                return await connection.GetDatabase().StringSetAsync(resource, Guid.NewGuid().ToByteArray(), ttl, When.NotExists, CommandFlags.DemandMaster);
+                //var connectionDatabase = connection.GetDatabase();
+                //bool keyExists = connectionDatabase.KeyExists(resource);
+
+                //var keyValuePairs = new KeyValuePair<RedisKey, RedisValue>[]
+                //{ new KeyValuePair<RedisKey, RedisValue>(resource, Guid.NewGuid().ToByteArray()) };
+                //var setString = connectionDatabase.StringSet(keyValuePairs, When.NotExists, CommandFlags.DemandMaster);
+                //var setStringWithSpan = connectionDatabase.StringSet(resource, Guid.NewGuid().ToByteArray(), TimeSpan.FromSeconds(2), When.NotExists, CommandFlags.DemandMaster);
+                //var setStringWithSpanAsync = await connectionDatabase.StringSetAsync(resource, Guid.NewGuid().ToByteArray(), TimeSpan.FromSeconds(2), When.NotExists);
+
+                return await connection.GetDatabase().StringSetAsync(resource, Guid.NewGuid().ToByteArray(), ttl, When.NotExists, CommandFlags.DemandMaster).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -148,7 +158,7 @@ namespace RedLock
 
             try
             {
-                await connection.GetDatabase().KeyDeleteAsync(key, CommandFlags.DemandMaster);
+                await connection.GetDatabase().KeyDeleteAsync(key, CommandFlags.DemandMaster).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -163,10 +173,10 @@ namespace RedLock
 
             while (currentRetry++ < retryCount)
             {
-                result = await action();
+                result = await action().ConfigureAwait(false);
                 if (result) break;
 
-                await Task.Delay(retryDelay);
+                await Task.Delay(retryDelay).ConfigureAwait(false);
             }
 
             return result;
