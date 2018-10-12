@@ -1,6 +1,7 @@
 #### 4.0.0 - 12.10.2018
 * Updates StackExchange.Redis package major version
 * Updates LibLog package major version
+* Fixes the project file such as nuget info, assembly name, root namespace and adds SourceLink
 
 #### 3.0.1 - 13.08.2018
 * Adds ConfigureAwait to async calls
