@@ -20,9 +20,11 @@
     <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;LIBLOG_PORTABLE;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <PackageReference Include="LibLog" Version="4.2.6" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.0.513" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="LibLog" Version="5.0.2" />
   </ItemGroup>
 
 </Project>
