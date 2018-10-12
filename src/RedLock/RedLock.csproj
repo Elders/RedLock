@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <!--Nuget-->
@@ -22,19 +22,7 @@
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <PackageReference Include="LibLog" Version="4.2.6" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
-    <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
+    <PackageReference Include="StackExchange.Redis" Version="2.0.513" />
   </ItemGroup>
 
-  <!--net45-->
-  <PropertyGroup Condition="'$(TargetFramework)'=='net45'">
-    <DefineConstants>TRACE;DEBUG;LIBLOG_PORTABLE</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net45'">
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-    <PackageReference Include="StackExchange.Redis" Version="1.2.6" />
-    <PackageReference Include="LibLog" Version="4.2.6" />
-  </ItemGroup>
 </Project>
