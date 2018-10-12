@@ -1,3 +1,6 @@
+#### 4.0.0 - 12.10.2018
+* Updates StackExchange.Redis package major version
+
 #### 3.0.1 - 13.08.2018
 * Adds ConfigureAwait to async calls
 
