@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using RedLock.Logging;
+using Elders.RedLock.Logging;
 using StackExchange.Redis;
 
-namespace RedLock
+namespace Elders.RedLock
 {
     public class RedisLockManager : IRedisLockManager
     {
