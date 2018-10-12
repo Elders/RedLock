@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using RedLock.Logging;
+using Elders.RedLock.Logging;
 using StackExchange.Redis;
 
-namespace RedLock
+namespace Elders.RedLock
 {
     public class RedisLockManager : IRedisLockManager
     {
@@ -125,15 +124,6 @@ namespace RedLock
 
             try
             {
-                //var connectionDatabase = connection.GetDatabase();
-                //bool keyExists = connectionDatabase.KeyExists(resource);
-
-                //var keyValuePairs = new KeyValuePair<RedisKey, RedisValue>[]
-                //{ new KeyValuePair<RedisKey, RedisValue>(resource, Guid.NewGuid().ToByteArray()) };
-                //var setString = connectionDatabase.StringSet(keyValuePairs, When.NotExists, CommandFlags.DemandMaster);
-                //var setStringWithSpan = connectionDatabase.StringSet(resource, Guid.NewGuid().ToByteArray(), TimeSpan.FromSeconds(2), When.NotExists, CommandFlags.DemandMaster);
-                //var setStringWithSpanAsync = await connectionDatabase.StringSetAsync(resource, Guid.NewGuid().ToByteArray(), TimeSpan.FromSeconds(2), When.NotExists);
-
                 return await connection.GetDatabase().StringSetAsync(resource, Guid.NewGuid().ToByteArray(), ttl, When.NotExists, CommandFlags.DemandMaster).ConfigureAwait(false);
             }
             catch (Exception ex)

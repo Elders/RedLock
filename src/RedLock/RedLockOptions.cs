@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RedLock
+namespace Elders.RedLock
 {
     public class RedLockOptions
     {
