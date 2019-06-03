@@ -1,3 +1,8 @@
+### 4.0.1 - 17.06.2019
+* Update StackExchange.Redis to 2.0.601
+* Update LibLog to 5.0.6
+* Update copy-right attribute
+
 #### 4.0.0 - 12.10.2018
 * Updates StackExchange.Redis package major version
 * Updates LibLog package major version
