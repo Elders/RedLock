@@ -9,9 +9,9 @@
     <Product>RedLock</Product>
     <Title>RedLock</Title>
     <Authors>Elders OSS</Authors>
-    <Copyright>Copyright © Elders OSS 2013</Copyright>
+    <Copyright>Copyright © Elders OSS 2019</Copyright>
     <Description>RedLock</Description>
-    <PackageTags>distrubited lock redis redlock cronus</PackageTags>
+    <PackageTags>distributed lock redis redlock cronus</PackageTags>
     <PackageLicenseUrl>https://github.com/Elders/RedLock/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/Elders/RedLock</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Elders/RedLock.git</RepositoryUrl>
@@ -26,9 +26,12 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="LibLog" Version="5.0.2" />
+    <PackageReference Include="LibLog" Version="5.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.0.513" />
+    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
   </ItemGroup>
 
   <PropertyGroup>
