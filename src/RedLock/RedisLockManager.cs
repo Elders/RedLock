@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Elders.RedLock.Logging;
+using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 
 namespace Elders.RedLock
@@ -15,19 +16,11 @@ namespace Elders.RedLock
 
         private ConnectionMultiplexer connection;
 
-        public RedisLockManager(string connectionString) : this(RedLockOptions.Default, connectionString)
+        public RedisLockManager(IOptionsMonitor<RedLockOptions> options)
         {
-        }
+            this.options = options.CurrentValue;
 
-        public RedisLockManager(RedLockOptions options, string connectionString)
-        {
-            if (ReferenceEquals(null, options)) throw new ArgumentNullException(nameof(options));
-            if (string.IsNullOrEmpty(connectionString)) throw new ArgumentNullException(nameof(connectionString));
-
-            this.options = options;
-
-            var configurationOptions = ConfigurationOptions.Parse(connectionString);
-
+            var configurationOptions = ConfigurationOptions.Parse(options.CurrentValue.ConnectionString);
             connection = ConnectionMultiplexer.Connect(configurationOptions);
         }
 

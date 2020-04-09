@@ -1,22 +1,17 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Elders.RedLock
 {
     public class RedLockOptions
     {
-        private static readonly RedLockOptions defaults = new RedLockOptions
-        {
-            LockRetryCount = 1,
-            LockRetryDelay = TimeSpan.FromMilliseconds(0),
-            ClockDriveFactor = 0.01
-        };
+        [Required(AllowEmptyStrings = false)]
+        public string ConnectionString { get; set; }
 
-        public int LockRetryCount { get; set; }
+        public int LockRetryCount { get; set; } = 1;
 
-        public TimeSpan LockRetryDelay { get; set; }
+        public TimeSpan LockRetryDelay { get; set; } = TimeSpan.FromMilliseconds(0);
 
-        public double ClockDriveFactor { get; set; }
-
-        public static RedLockOptions Default { get { return defaults; } }
+        public double ClockDriveFactor { get; set; } = 0.01;
     }
 }
