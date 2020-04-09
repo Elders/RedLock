@@ -1,3 +1,6 @@
+### 5.0.0 - 09.04.2020
+* Using Options pattern
+
 ### 4.0.1 - 17.06.2019
 * Update StackExchange.Redis to 2.0.601
 * Update LibLog to 5.0.6
