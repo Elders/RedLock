@@ -1,48 +1,45 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
 
   <!--Nuget-->
   <PropertyGroup>
     <PackageId>RedLock</PackageId>
+
     <Product>RedLock</Product>
     <Title>RedLock</Title>
-    <Authors>Elders OSS</Authors>
-    <Copyright>Copyright © Elders OSS 2019</Copyright>
     <Description>RedLock</Description>
     <PackageTags>distributed lock redis redlock cronus</PackageTags>
-    <PackageLicenseUrl>https://github.com/Elders/RedLock/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/Elders/RedLock</PackageProjectUrl>
+
+    <Copyright>Copyright © Elders OSS 2013-2022</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <RequireLicenseAcceptance>true</RequireLicenseAcceptance>
+
+    <ReleaseNotes>https://github.com/Elders/RedLock/blob/migrate-to-dotnet6/CHANGELOG.md</ReleaseNotes>
     <RepositoryUrl>https://github.com/Elders/RedLock.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Elders/RedLock</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
     <AssemblyName>Elders.RedLock</AssemblyName>
-    <NeutralLanguage>en-US</NeutralLanguage>
     <RootNamespace>Elders.RedLock</RootNamespace>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <AssemblyVersion>6.0.0</AssemblyVersion>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="LibLog" Version="5.0.6">
+    <PackageReference Include="LibLog" Version="5.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.3" />
-    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.5.43" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <DebugType>portable</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <EmbedSources>true</EmbedSources>
-  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="SourceLink.Create.CommandLine" Version="2.8.3" PrivateAssets="All" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 </Project>
