@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Elders.RedLock.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 
@@ -8,7 +8,7 @@ namespace Elders.RedLock
 {
     public class RedisLockManager : IRedisLockManager
     {
-        private static ILog log = LogProvider.GetLogger(nameof(RedisLockManager));
+        private ILogger<RedisLockManager> log;
 
         private RedLockOptions options;
 
@@ -16,10 +16,10 @@ namespace Elders.RedLock
 
         private ConnectionMultiplexer connection;
 
-        public RedisLockManager(IOptionsMonitor<RedLockOptions> options)
+        public RedisLockManager(IOptionsMonitor<RedLockOptions> options, ILogger<RedisLockManager> logger)
         {
             this.options = options.CurrentValue;
-
+            log = logger;
             var configurationOptions = ConfigurationOptions.Parse(options.CurrentValue.ConnectionString);
             connection = ConnectionMultiplexer.Connect(configurationOptions);
         }
@@ -48,7 +48,7 @@ namespace Elders.RedLock
         {
             if (connection.IsConnected == false)
             {
-                log.Warn($"Unreachable endpoint '{connection.ClientName}'.");
+                log.LogWarning($"Unreachable endpoint '{connection.ClientName}'.");
                 return false;
             }
 
@@ -58,7 +58,7 @@ namespace Elders.RedLock
             }
             catch (Exception ex)
             {
-                log.WarnException($"Unreachable endpoint '{connection.ClientName}'.", ex);
+                log.LogWarning(ex, $"Unreachable endpoint '{connection.ClientName}'.");
                 return false;
             }
         }
@@ -110,7 +110,7 @@ namespace Elders.RedLock
             if (connection.IsConnected == false)
             {
                 var message = $"Unreachable endpoint '{connection.ClientName}'. Unable to acquire lock on this node.";
-                log.Warn(message);
+                log.LogWarning(message);
 
                 return false;
             }
@@ -122,7 +122,7 @@ namespace Elders.RedLock
             catch (Exception ex)
             {
                 var message = $"Unreachable endpoint '{connection.ClientName}'. Unable to acquire lock on this node.";
-                log.WarnException(message, ex);
+                log.LogWarning(ex, message);
 
                 return false;
             }
@@ -132,7 +132,7 @@ namespace Elders.RedLock
         {
             if (connection.IsConnected == false)
             {
-                log.Warn($"Unreachable endpoint '{connection.ClientName}'. Unable to unlock resource '{resource}'.");
+                log.LogWarning($"Unreachable endpoint '{connection.ClientName}'. Unable to unlock resource '{resource}'.");
 
                 return;
             }
@@ -145,7 +145,7 @@ namespace Elders.RedLock
             }
             catch (Exception ex)
             {
-                log.WarnException($"Unreachable endpoint '{connection.ClientName}'. Unable to unlock resource '{resource}'.", ex);
+                log.LogWarning(ex, $"Unreachable endpoint '{connection.ClientName}'. Unable to unlock resource '{resource}'.");
             }
         }
 
