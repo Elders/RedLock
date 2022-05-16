@@ -1,3 +1,5 @@
+# [7.0.0](https://github.com/Elders/RedLock/compare/v6.1.0...v7.0.0) (2022-05-16)
+
 # [6.1.0](https://github.com/Elders/RedLock/compare/v6.0.0...v6.1.0) (2022-03-28)
 
 
