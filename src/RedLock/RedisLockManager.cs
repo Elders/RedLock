@@ -24,27 +24,17 @@ namespace Elders.RedLock
             connection = ConnectionMultiplexer.Connect(configurationOptions);
         }
 
-        public bool Lock(string resource, TimeSpan ttl)
+        public Task<bool> LockAsync(string resource, TimeSpan ttl)
         {
-            return LockAsync(resource, ttl).Result;
+            return RetryAsync(async () => await AcquireLock(resource, ttl), options.LockRetryCount, options.LockRetryDelay);
         }
 
-        public async Task<bool> LockAsync(string resource, TimeSpan ttl)
+        public Task UnlockAsync(string resource)
         {
-            return await Retry(() => AcquireLock(resource, ttl), options.LockRetryCount, options.LockRetryDelay).ConfigureAwait(false);
+            return UnlockInstance(resource);
         }
 
-        public void Unlock(string resource)
-        {
-            UnlockAsync(resource).Wait();
-        }
-
-        public async Task UnlockAsync(string resource)
-        {
-            await UnlockInstance(resource).ConfigureAwait(false);
-        }
-
-        public bool IsLocked(string resource)
+        public async Task<bool> IsLockedAsync(string resource)
         {
             if (connection.IsConnected == false)
             {
@@ -54,7 +44,7 @@ namespace Elders.RedLock
 
             try
             {
-                return connection.GetDatabase().KeyExists(resource, CommandFlags.DemandMaster);
+                return await connection.GetDatabase().KeyExistsAsync(resource, CommandFlags.DemandMaster).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -149,7 +139,7 @@ namespace Elders.RedLock
             }
         }
 
-        private static async Task<bool> Retry(Func<Task<bool>> action, int retryCount, TimeSpan retryDelay)
+        private async Task<bool> RetryAsync(Func<Task<bool>> action, int retryCount, TimeSpan retryDelay)
         {
             var currentRetry = 0;
             var result = false;

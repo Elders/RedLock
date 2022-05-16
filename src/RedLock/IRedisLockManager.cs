@@ -5,13 +5,9 @@ namespace Elders.RedLock
 {
     public interface IRedisLockManager : IDisposable
     {
-        bool IsLocked(string resource);
-
-        bool Lock(string resource, TimeSpan ttl);
+        Task<bool> IsLockedAsync(string resource);
 
         Task<bool> LockAsync(string resource, TimeSpan ttl);
-
-        void Unlock(string resource);
 
         Task UnlockAsync(string resource);
     }
