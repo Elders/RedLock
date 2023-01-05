@@ -1,3 +1,5 @@
+# [8.0.0-preview.1](https://github.com/Elders/RedLock/compare/v7.0.1...v8.0.0-preview.1) (2023-01-05)
+
 ## [7.0.1](https://github.com/Elders/RedLock/compare/v7.0.0...v7.0.1) (2022-08-16)
 
 
