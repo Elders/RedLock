@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Elders.RedLock
 {
-    public interface IRedisLockManager : IDisposable
+    public interface IRedisLockManager
     {
         Task<bool> IsLockedAsync(string resource);
 
