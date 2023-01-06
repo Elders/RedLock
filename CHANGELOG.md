@@ -1,3 +1,16 @@
+# [8.1.0](https://github.com/Elders/RedLock/compare/v8.0.0...v8.1.0) (2023-01-06)
+
+
+### Bug Fixes
+
+* bind Redlock options from the configurations ([99aefa1](https://github.com/Elders/RedLock/commit/99aefa15dc839e71dfc02fe182ad476a8599b914))
+* validate options ([b7693ac](https://github.com/Elders/RedLock/commit/b7693ac48cb85c306ed37cdc095be52e1c9e01e0))
+
+
+### Features
+
+* making the logger optional ([ae69a92](https://github.com/Elders/RedLock/commit/ae69a924d328120f82055668d09fc9c3966cb75f))
+
 # [8.1.0-preview.2](https://github.com/Elders/RedLock/compare/v8.1.0-preview.1...v8.1.0-preview.2) (2023-01-06)
 
 
