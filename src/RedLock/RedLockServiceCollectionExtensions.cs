@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Elders.RedLock
 {
@@ -9,6 +10,7 @@ namespace Elders.RedLock
             services.AddSingleton<IRedisLockManager, RedisLockManager>();
 
             services.AddOptions<RedLockOptions>();
+            services.AddTransient<IConfigureOptions<RedLockOptions>, RedLockOptionsProvider>();
 
             return services;
         }
