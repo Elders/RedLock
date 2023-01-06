@@ -13,13 +13,19 @@
     ```json
     {
         "RedLock": {
-            "ConnectionString": "{YOUR_REDIS_CONNECTION_STRING}", // required
-            "LockRetryCount": 2, // defaults to 1
-            "LockRetryDelay": "00:00:00.500", // defaults to 10 ms
-            "ClockDriveFactor": 0.02 // defaults to 0.01 (Read https://redis.io/docs/manual/patterns/distributed-locks/#safety-arguments for details)
+            "ConnectionString": "{YOUR_REDIS_CONNECTION_STRING}",
+            "LockRetryCount": 2,
+            "LockRetryDelay": "00:00:00.500",
+            "ClockDriveFactor": 0.02
         }
     }
     ```
+| Setting | Comment |
+| --- | --- |
+| ConnectionString | Your Redis connection string (required) |
+| LockRetryCount | Total amount of retries to aquire lock (default: 1) |
+| LockRetryDelay | Time to wait between retries (default: 10 ms.) |
+| ClockDriveFactor | Factor to determine the clock drift. Read [this](https://redis.io/docs/manual/patterns/distributed-locks/#safety-arguments) for details. `clock_drift = (lock_ttl_milliseconds * ClockDriveFactor) + 2`. (default: 0.01) |
 
 ### Usage
 
