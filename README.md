@@ -20,12 +20,12 @@
         }
     }
     ```
-| Setting | Comment |
-| --- | --- |
-| ConnectionString | Your Redis connection string (required) |
-| LockRetryCount | Total amount of retries to aquire lock (default: 1) |
-| LockRetryDelay | Time to wait between retries (default: 10 ms.) |
-| ClockDriveFactor | Factor to determine the clock drift. Read [this](https://redis.io/docs/manual/patterns/distributed-locks/#safety-arguments) for details. `clock_drift = (lock_ttl_milliseconds * ClockDriveFactor) + 2`. (default: 0.01) |
+| Setting | Comment | Default |
+| --- | --- | :---: |
+| ConnectionString | Your Redis connection string | (required) |
+| LockRetryCount | Total amount of retries to aquire lock | 1 |
+| LockRetryDelay | Time to wait between retries | 10 ms |
+| ClockDriveFactor | Factor to determine the clock drift. `clock_drift = (lock_ttl_milliseconds * ClockDriveFactor) + 2`. Adding 2 milliseconds to the drift to account for Redis expires precision (1 ms) plus the configured allowable drift factor. Read [this](https://redis.io/docs/manual/patterns/distributed-locks/#safety-arguments) for details. | 0.01 |
 
 ### Usage
 
