@@ -1,3 +1,10 @@
+# [8.0.0](https://github.com/Elders/RedLock/compare/v7.0.1...v8.0.0) (2023-01-06)
+
+
+### Bug Fixes
+
+* Fixes the retry to work properly ([7c00d3d](https://github.com/Elders/RedLock/commit/7c00d3ddff5928ed4f6e7797905914acca827b96))
+
 # [8.0.0-preview.2](https://github.com/Elders/RedLock/compare/v8.0.0-preview.1...v8.0.0-preview.2) (2023-01-06)
 
 
