@@ -113,21 +113,20 @@ namespace Elders.RedLock
             var currentRetry = 0;
             var result = false;
 
-            while (currentRetry++ < retryCount)
+            while (currentRetry++ <= retryCount)
             {
                 try
                 {
                     result = await action().ConfigureAwait(false);
-                    if (result) break;
-
-                    await Task.Delay(retryDelay).ConfigureAwait(false);
+                    if (result)
+                        return result;
                 }
                 catch (Exception ex)
                 {
                     logger.LogError(ex, "Redlock operation has failed.");
-
-                    await Task.Delay(retryDelay).ConfigureAwait(false);
                 }
+
+                await Task.Delay(retryDelay).ConfigureAwait(false);
             }
 
             return result;
