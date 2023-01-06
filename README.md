@@ -1,25 +1,25 @@
-# Redlock
+# RedLock
 
-## A C# implementation of a distributed lock with Redis based on [this documentation](https://redis.io/docs/manual/patterns/distributed-locks/)
+## A C# implementation of a distributed lock algorithm with Redis based on [this documentation](https://redis.io/docs/manual/patterns/distributed-locks/)
 
 ### Setup
 
-1. `Startup.cs`
-    ```csharp
-    services.AddRedLock();
-    ```
+1. Register RedLock to your container
+```csharp
+services.AddRedLock();
+```
 
-2. `appsettings.json`
-    ```json
-    {
-        "RedLock": {
-            "ConnectionString": "{YOUR_REDIS_CONNECTION_STRING}",
-            "LockRetryCount": 2,
-            "LockRetryDelay": "00:00:00.500",
-            "ClockDriveFactor": 0.02
-        }
+2. Configure
+```json
+{
+    "RedLock": {
+        "ConnectionString": "{YOUR_REDIS_CONNECTION_STRING}",
+        "LockRetryCount": 2,
+        "LockRetryDelay": "00:00:00.500",
+        "ClockDriveFactor": 0.02
     }
-    ```
+}
+```
 | Setting | Comment | Default |
 | --- | --- | :---: |
 | ConnectionString | Your Redis connection string | (required) |
