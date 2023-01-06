@@ -1,3 +1,10 @@
+# [8.1.0-preview.2](https://github.com/Elders/RedLock/compare/v8.1.0-preview.1...v8.1.0-preview.2) (2023-01-06)
+
+
+### Bug Fixes
+
+* validate options ([b7693ac](https://github.com/Elders/RedLock/commit/b7693ac48cb85c306ed37cdc095be52e1c9e01e0))
+
 # [8.1.0-preview.1](https://github.com/Elders/RedLock/compare/v8.0.0...v8.1.0-preview.1) (2023-01-06)
 
 
