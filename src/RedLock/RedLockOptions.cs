@@ -12,6 +12,9 @@ namespace Elders.RedLock
 
         public TimeSpan LockRetryDelay { get; set; } = TimeSpan.FromMilliseconds(10);
 
+        /// <summary>
+        /// https://redis.io/docs/manual/patterns/distributed-locks/#safety-arguments
+        /// </summary>
         public double ClockDriveFactor { get; set; } = 0.01;
     }
 }
