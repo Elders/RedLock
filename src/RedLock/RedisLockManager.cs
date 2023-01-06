@@ -16,9 +16,16 @@ namespace Elders.RedLock
 
         private ConnectionMultiplexer connectionDoNotUse;
 
+        public RedisLockManager(IOptionsMonitor<RedLockOptions> options)
+        {
+            this.options = options.CurrentValue;
+            options.OnChange(x => this.options = x);
+        }
+
         public RedisLockManager(IOptionsMonitor<RedLockOptions> options, ILogger<RedisLockManager> logger)
         {
             this.options = options.CurrentValue;
+            options.OnChange(x => this.options = x);
             this.logger = logger;
         }
 
@@ -49,11 +56,8 @@ namespace Elders.RedLock
 
             if (disposing)
             {
-                if (connectionDoNotUse != null)
-                {
-                    connectionDoNotUse.Dispose();
-                }
-
+                connectionDoNotUse?.Dispose();
+                connectionDoNotUse = null;
                 isDisposed = true;
             }
         }
@@ -67,7 +71,7 @@ namespace Elders.RedLock
                 return false;
             }
 
-            var drift = Convert.ToInt32((ttl.TotalMilliseconds * options.ClockDriveFactor) + 2);
+            var drift = Convert.ToInt32((ttl.TotalMilliseconds * options.ClockDriveFactor) + 2); // read https://redis.io/docs/manual/patterns/distributed-locks/#safety-arguments
             var validityTime = ttl - (DateTime.Now - startTime) - new TimeSpan(0, 0, 0, 0, drift);
 
             if (validityTime.TotalMilliseconds > 0)
@@ -75,7 +79,7 @@ namespace Elders.RedLock
 
             await UnlockInstanceAsync(resource).ConfigureAwait(false);
 
-            logger.LogWarning($"The specified TTL for the resource '{resource}' was too short ({ttl.TotalMilliseconds}ms) and it has been unlocked immediately. Try using longer TTL value.");
+            logger?.LogWarning($"The specified TTL for the resource '{resource}' was too short ({ttl.TotalMilliseconds}ms) and it has been unlocked immediately. Try using longer TTL value.");
 
             return false;
         }
@@ -123,7 +127,7 @@ namespace Elders.RedLock
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError(ex, "Redlock operation has failed.");
+                    logger?.LogError(ex, "Redlock operation has failed.");
                 }
 
                 await Task.Delay(retryDelay).ConfigureAwait(false);
@@ -143,7 +147,7 @@ namespace Elders.RedLock
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError(ex, $"Unable to establish connection with Redis: {options.ConnectionString}");
+                    logger?.LogError(ex, $"Unable to establish connection with Redis: {options.ConnectionString}");
                     throw;
                 }
             }
@@ -154,7 +158,7 @@ namespace Elders.RedLock
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Unable to execute Redis query.");
+                logger?.LogError(ex, $"Unable to execute Redis query.");
 
                 return default;
             }
