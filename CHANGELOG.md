@@ -1,3 +1,12 @@
+# [8.0.0-preview.2](https://github.com/Elders/RedLock/compare/v8.0.0-preview.1...v8.0.0-preview.2) (2023-01-06)
+
+
+### Bug Fixes
+
+* Fixes the retry to work properly ([7c00d3d](https://github.com/Elders/RedLock/commit/7c00d3ddff5928ed4f6e7797905914acca827b96))
+
+# [8.0.0-preview.1](https://github.com/Elders/RedLock/compare/v7.0.1...v8.0.0-preview.1) (2023-01-05)
+
 ## [7.0.1](https://github.com/Elders/RedLock/compare/v7.0.0...v7.0.1) (2022-08-16)
 
 
@@ -15,3 +24,44 @@
 * Changes Logger ([27ecc6f](https://github.com/Elders/RedLock/commit/27ecc6fd070dc38971c70cde82da74a0e3b0e4eb))
 
 # [6.0.0](https://github.com/Elders/RedLock/compare/v5.0.0...v6.0.0) (2022-03-28)
+
+### 5.0.0 - 09.04.2020
+* Using Options pattern
+
+### 4.0.1 - 17.06.2019
+* Update StackExchange.Redis to 2.0.601
+* Update LibLog to 5.0.6
+* Update copy-right attribute
+
+#### 4.0.0 - 12.10.2018
+* Updates StackExchange.Redis package major version
+* Updates LibLog package major version
+* Fixes the project file such as nuget info, assembly name, root namespace and adds SourceLink
+
+#### 3.0.1 - 13.08.2018
+* Adds ConfigureAwait to async calls
+
+#### 3.0.0 - 25.07.2018
+* Removes Newtonsoft.Json
+* Removes LockResult
+* Removes Mutex
+
+#### 2.0.1 - 20.02.2018
+* Downgrades Newtonsoft.Json to 10.0.3
+
+#### 2.0.0 - 19.02.2018
+* Adds netstandard2.0 support
+
+#### 1.0.1 - 27.01.2016
+* Changed RedisLockManager constructor to work with Redis Connection String
+
+
+#### 1.0.0 - 27.01.2016
+* Changed RedisLockManager constructor to work with StackExchange.Redis.ConnectionOptions instead with IPEndpoints 
+
+#### 0.1.0 - 07.01.2016
+* Use a 64-based string as a Redis key if an object is supplied as a resource key.
+* Update RedisLockManager to use Redis cluster.
+* RedisLockManager.UnlockInstance does not throw if the end point is unreachable.
+* Added dependency to LibLog.
+* Exceptions from LockInstance(), UnlockInstance() and IsLocked() are being logged.
