@@ -5,7 +5,7 @@ namespace Elders.RedLock
 {
     public sealed class RedLockOptions
     {
-        [Required(AllowEmptyStrings = false)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = $"{nameof(RedLockOptions)}.{nameof(ConnectionString)} is required.")]
         public string ConnectionString { get; set; }
 
         public ushort LockRetryCount { get; set; } = 1;
