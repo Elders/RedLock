@@ -46,4 +46,9 @@ if (await redlock.LockAsync(resource, TimeSpan.FromSeconds(2)))
         await redlock.UnlockAsync(resource);
     }
 }
+else
+{
+    // failed to lock resource
+    // fallback
+}
 ```
