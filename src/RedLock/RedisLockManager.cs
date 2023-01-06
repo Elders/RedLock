@@ -71,7 +71,9 @@ namespace Elders.RedLock
                 return false;
             }
 
-            var drift = Convert.ToInt32((ttl.TotalMilliseconds * options.ClockDriveFactor) + 2); // read https://redis.io/docs/manual/patterns/distributed-locks/#safety-arguments
+            // Add 2 milliseconds to the drift to account for Redis expires precision, which is 1 ms, plus the configured allowable drift factor.
+            // Read https://redis.io/docs/manual/patterns/distributed-locks/#safety-arguments
+            var drift = Convert.ToInt32((ttl.TotalMilliseconds * options.ClockDriveFactor) + 2);
             var validityTime = ttl - (DateTime.Now - startTime) - new TimeSpan(0, 0, 0, 0, drift);
 
             if (validityTime.TotalMilliseconds > 0)
