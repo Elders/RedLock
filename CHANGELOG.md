@@ -1,3 +1,10 @@
+# [8.2.0](https://github.com/Elders/RedLock/compare/v8.1.0...v8.2.0) (2023-01-09)
+
+
+### Features
+
+* Allows overriding the default config options provider ([525edc9](https://github.com/Elders/RedLock/commit/525edc9a9f4e55d5b1ecfe0c860d704f7152792d))
+
 # [8.1.0](https://github.com/Elders/RedLock/compare/v8.0.0...v8.1.0) (2023-01-06)
 
 
