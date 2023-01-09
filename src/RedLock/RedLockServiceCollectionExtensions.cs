@@ -10,7 +10,18 @@ namespace Elders.RedLock
             services.AddSingleton<IRedisLockManager, RedisLockManager>();
 
             services.AddOptions<RedLockOptions>();
-            services.AddTransient<IConfigureOptions<RedLockOptions>, RedLockOptionsProvider>();
+            services.AddSingleton<IConfigureOptions<RedLockOptions>, RedLockOptionsProvider>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddRedLock<TOptionsProvider>(this IServiceCollection services)
+            where TOptionsProvider : class, IConfigureOptions<RedLockOptions>
+        {
+            services.AddSingleton<IRedisLockManager, RedisLockManager>();
+
+            services.AddOptions<RedLockOptions>();
+            services.AddSingleton<IConfigureOptions<RedLockOptions>, TOptionsProvider>();
 
             return services;
         }

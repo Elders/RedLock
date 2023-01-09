@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace Elders.RedLock
 {
-    public sealed class RedLockOptionsProvider : IConfigureOptions<RedLockOptions>
+    internal sealed class RedLockOptionsProvider : IConfigureOptions<RedLockOptions>
     {
         private readonly IConfiguration configuration;
 
