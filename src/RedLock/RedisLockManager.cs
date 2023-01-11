@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -8,7 +9,7 @@ namespace Elders.RedLock
 {
     public class RedisLockManager : IRedisLockManager, IDisposable
     {
-        private ILogger<RedisLockManager> logger;
+        private readonly ILogger<RedisLockManager> logger;
 
         private RedLockOptions options;
 
@@ -31,12 +32,18 @@ namespace Elders.RedLock
 
         public Task<bool> LockAsync(string resource, TimeSpan ttl)
         {
-            return RetryAsync(async () => await AcquireLockAsync(resource, ttl), options.LockRetryCount, options.LockRetryDelay);
+            using (logger.BeginScope(new Dictionary<string, object> { ["redlock_resource"] = resource }))
+            {
+                return RetryAsync(async () => await AcquireLockAsync(resource, ttl), options.LockRetryCount, options.LockRetryDelay);
+            }
         }
 
         public Task UnlockAsync(string resource)
         {
-            return UnlockInstanceAsync(resource);
+            using (logger.BeginScope(new Dictionary<string, object> { ["redlock_resource"] = resource }))
+            {
+                return UnlockInstanceAsync(resource);
+            }
         }
 
         public async Task<bool> IsLockedAsync(string resource)
@@ -81,7 +88,7 @@ namespace Elders.RedLock
 
             await UnlockInstanceAsync(resource).ConfigureAwait(false);
 
-            logger?.LogWarning($"The specified TTL for the resource '{resource}' was too short ({ttl.TotalMilliseconds}ms) and it has been unlocked immediately. Try using longer TTL value.");
+            logger?.LogWarning($"Unable to lock the resource. Reason1: The lock request to Redis took more than expected and the resource has been unlocked immediately. Reason2: The specified TTL for the resource '{resource}' was too short ({ttl.TotalMilliseconds}ms). Try using longer TTL value.");
 
             return false;
         }
