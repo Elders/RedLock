@@ -1,3 +1,10 @@
+## [8.2.1](https://github.com/Elders/RedLock/compare/v8.2.0...v8.2.1) (2023-01-11)
+
+
+### Bug Fixes
+
+* Improves logging ([23b917c](https://github.com/Elders/RedLock/commit/23b917c7a8897eebe60b4af0bb6ee1a7f10618d8))
+
 # [8.2.0](https://github.com/Elders/RedLock/compare/v8.1.0...v8.2.0) (2023-01-09)
 
 
