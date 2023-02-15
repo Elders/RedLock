@@ -41,6 +41,15 @@ if (await redlock.LockAsync(resource, TimeSpan.FromSeconds(2)))
         if (await redlock.IsLockedAsync(resource))
         {
             // do more stuff
+            if (await redlock.ExtendLockAsync(resource, TimeSpan.FromSeconds(2)))
+            {
+                // do even more stuff
+            }
+            else
+            {
+                // failed to extend resource lock
+                // fallback
+            }
         }
         else
         {
