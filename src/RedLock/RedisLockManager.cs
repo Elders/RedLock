@@ -52,6 +52,15 @@ namespace Elders.RedLock
                         await connection.GetDatabase().KeyExistsAsync(resource, CommandFlags.DemandMaster).ConfigureAwait(false)).ConfigureAwait(false);
         }
 
+        public async Task<bool> ExtendLockAsync(string resource, TimeSpan ttl)
+        {
+            using (logger.BeginScope(new Dictionary<string, object> { ["redlock_resource"] = resource }))
+            {
+                return await ExecuteAsync(async connection =>
+                        await connection.GetDatabase().KeyExpireAsync(resource, ttl, ExpireWhen.Always, CommandFlags.DemandMaster).ConfigureAwait(false)).ConfigureAwait(false);
+            }
+        }
+
         public void Dispose()
         {
             Dispose(true);

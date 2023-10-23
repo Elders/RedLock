@@ -1,3 +1,10 @@
+# [8.3.0-preview.1](https://github.com/Elders/RedLock/compare/v8.2.1...v8.3.0-preview.1) (2023-02-15)
+
+
+### Features
+
+* extending lock duration ([851ffc6](https://github.com/Elders/RedLock/commit/851ffc60cb2c0a2b3ff2968aa0c702bc79e9c7a6))
+
 ## [8.2.1](https://github.com/Elders/RedLock/compare/v8.2.0...v8.2.1) (2023-01-11)
 
 
