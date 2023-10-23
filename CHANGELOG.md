@@ -1,3 +1,10 @@
+# [9.0.0-preview.1](https://github.com/Elders/RedLock/compare/v8.3.0...v9.0.0-preview.1) (2023-10-23)
+
+
+### Bug Fixes
+
+* Configures the CI to use net8 preview ([0be952b](https://github.com/Elders/RedLock/commit/0be952b80db5e6a64515b1c760eff8d8bc189f17))
+
 # [8.3.0](https://github.com/Elders/RedLock/compare/v8.2.1...v8.3.0) (2023-10-23)
 
 
