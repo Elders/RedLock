@@ -1,3 +1,10 @@
+## [9.0.1](https://github.com/Elders/RedLock/compare/v9.0.0...v9.0.1) (2024-03-27)
+
+
+### Bug Fixes
+
+* Updates packages ([7bc5f33](https://github.com/Elders/RedLock/commit/7bc5f33f52ecb5fd6c9afc77a7f09056a7bdca95))
+
 # [9.0.0](https://github.com/Elders/RedLock/compare/v8.3.0...v9.0.0) (2023-11-17)
 
 
