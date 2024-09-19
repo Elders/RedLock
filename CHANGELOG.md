@@ -1,3 +1,10 @@
+## [9.0.2](https://github.com/Elders/RedLock/compare/v9.0.1...v9.0.2) (2024-09-19)
+
+
+### Bug Fixes
+
+* prevent NullReferenceException when using the constructor accepting only options ([56ad8c3](https://github.com/Elders/RedLock/commit/56ad8c3db131074179fe35fca737d45b624bc219))
+
 ## [9.0.1](https://github.com/Elders/RedLock/compare/v9.0.0...v9.0.1) (2024-03-27)
 
 
