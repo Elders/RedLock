@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 
@@ -17,11 +18,7 @@ namespace Elders.RedLock
 
         private ConnectionMultiplexer connectionDoNotUse;
 
-        public RedisLockManager(IOptionsMonitor<RedLockOptions> options)
-        {
-            this.options = options.CurrentValue;
-            options.OnChange(x => this.options = x);
-        }
+        public RedisLockManager(IOptionsMonitor<RedLockOptions> options) : this(options, NullLogger<RedisLockManager>.Instance) { }
 
         public RedisLockManager(IOptionsMonitor<RedLockOptions> options, ILogger<RedisLockManager> logger)
         {
@@ -97,7 +94,7 @@ namespace Elders.RedLock
 
             await UnlockInstanceAsync(resource).ConfigureAwait(false);
 
-            logger?.LogWarning($"Unable to lock the resource. Reason1: The lock request to Redis took more than expected and the resource has been unlocked immediately. Reason2: The specified TTL for the resource '{resource}' was too short ({ttl.TotalMilliseconds}ms). Try using longer TTL value.");
+            logger.LogWarning("Unable to lock the resource. Reason1: The lock request to Redis took more than expected and the resource has been unlocked immediately. Reason2: The specified TTL for the resource '{Resource}' was too short ({Ttl}ms). Try using longer TTL value.", resource, ttl.TotalMilliseconds);
 
             return false;
         }
@@ -145,7 +142,7 @@ namespace Elders.RedLock
                 }
                 catch (Exception ex)
                 {
-                    logger?.LogError(ex, "Redlock operation has failed.");
+                    logger.LogError(ex, "Redlock operation has failed.");
                 }
 
                 await Task.Delay(retryDelay).ConfigureAwait(false);
@@ -165,7 +162,7 @@ namespace Elders.RedLock
                 }
                 catch (Exception ex)
                 {
-                    logger?.LogError(ex, $"Unable to establish connection with Redis: {options.ConnectionString}");
+                    logger.LogError(ex, "Unable to establish connection with Redis: {ConnectionString}", options.ConnectionString);
                     throw;
                 }
             }
@@ -176,7 +173,7 @@ namespace Elders.RedLock
             }
             catch (Exception ex)
             {
-                logger?.LogError(ex, $"Unable to execute Redis query.");
+                logger.LogError(ex, "Unable to execute Redis query.");
 
                 return default;
             }
